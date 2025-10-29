@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Rastreo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard_style.css') }}">
+</head>
+<body>
+    <h1>Estado de tus envíos</h1>
+
+    {% if trackings %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Número de Guía</th>
+                    <th>Último Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tracking in trackings %}
+                <tr>
+                    <td>{{ tracking.number }}</td>
+                    <td>{{ tracking.status }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No se encontraron números de guía en el archivo o hubo un error al procesarlo.</p>
+    {% endif %}
+
+    <a href="{{ url_for('index') }}" class="back-button">Subir otro archivo</a>
+</body>
+</html>
