@@ -10,6 +10,20 @@ h1 {
     margin-bottom: 2rem;
 }
 
+.controls {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+    gap: 1rem;
+}
+
+#searchInput, #statusFilter {
+    padding: 0.5rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
 table {
     width: 80%;
     margin: 0 auto;

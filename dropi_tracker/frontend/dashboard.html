@@ -9,8 +9,15 @@
 <body>
     <h1>Estado de tus envíos</h1>
 
+    <div class="controls">
+        <input type="text" id="searchInput" placeholder="Buscar por número de guía...">
+        <select id="statusFilter">
+            <option value="">Filtrar por estado...</option>
+        </select>
+    </div>
+
     {% if trackings %}
-        <table>
+        <table id="resultsTable">
             <thead>
                 <tr>
                     <th>Número de Guía</th>
@@ -31,5 +38,53 @@
     {% endif %}
 
     <a href="{{ url_for('index') }}" class="back-button">Subir otro archivo</a>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const statusFilter = document.getElementById('statusFilter');
+            const resultsTable = document.getElementById('resultsTable');
+            const tableRows = resultsTable.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+            // --- Populate Status Filter ---
+            const statuses = new Set();
+            for (let row of tableRows) {
+                const statusCell = row.getElementsByTagName('td')[1];
+                if (statusCell) {
+                    statuses.add(statusCell.textContent.trim());
+                }
+            }
+            statuses.forEach(status => {
+                const option = document.createElement('option');
+                option.value = status;
+                option.textContent = status;
+                statusFilter.appendChild(option);
+            });
+
+            // --- Filter Function ---
+            function filterTable() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const selectedStatus = statusFilter.value;
+
+                for (let row of tableRows) {
+                    const guideCell = row.getElementsByTagName('td')[0];
+                    const statusCell = row.getElementsByTagName('td')[1];
+
+                    const guideMatch = guideCell.textContent.toLowerCase().includes(searchTerm);
+                    const statusMatch = selectedStatus === "" || statusCell.textContent.trim() === selectedStatus;
+
+                    if (guideMatch && statusMatch) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                }
+            }
+
+            // --- Event Listeners ---
+            searchInput.addEventListener('keyup', filterTable);
+            statusFilter.addEventListener('change', filterTable);
+        });
+    </script>
 </body>
 </html>
