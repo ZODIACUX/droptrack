@@ -2,7 +2,7 @@ from flask import Flask, request, render_template, redirect, url_for, flash
 import os
 import json
 from werkzeug.utils import secure_filename
-from utils import csv_parser, interrapidisimo_tracker
+from utils import csv_parser, shipment_tracker
 from utils.dropi_api_client import DropiAPIClient
 
 UPLOAD_FOLDER = 'uploads'
@@ -39,14 +39,20 @@ def upload_file():
 
         tracking_numbers = csv_parser.parse_csv(filepath)
 
-        # Now, track the packages using the tracker utility
-        tracking_results = interrapidisimo_tracker.track_packages(tracking_numbers)
+        # Build a list of shipment dicts, assuming a default carrier for CSV uploads
+        shipments = [{"number": num, "carrier": "INTER RAPIDISIMO"} for num in tracking_numbers]
+
+        # Track the shipments using the updated tracker utility
+        tracking_results = shipment_tracker.track_shipments(shipments)
 
         # Format the results for the dashboard template
         trackings = []
-        for number, details in tracking_results.items():
+        for shipment in shipments:
+            number = shipment['number']
+            details = tracking_results.get(number, {})
             trackings.append({
                 "number": number,
+                "carrier": shipment['carrier'],
                 "status": details.get('last_event', details.get('status', 'N/A'))
             })
 
@@ -63,20 +69,22 @@ def settings():
 def sync_with_dropi():
     try:
         client = DropiAPIClient()
-        tracking_numbers = client.get_tracking_numbers()
+        shipments = client.get_shipments()
 
-        if not tracking_numbers:
+        if not shipments:
             flash('No se encontraron guías en Dropi o las órdenes aún no han sido despachadas.')
             return redirect(url_for('index'))
 
-        # Track the packages using the existing tracker utility
-        tracking_results = interrapidisimo_tracker.track_packages(tracking_numbers)
+        # Track the shipments using the updated tracker utility
+        tracking_results = shipment_tracker.track_shipments(shipments)
 
-        # Format the results for the dashboard template
+        # Format the results for the dashboard template, now including the carrier
         trackings = []
+        shipment_map = {s['number']: s for s in shipments}
         for number, details in tracking_results.items():
             trackings.append({
                 "number": number,
+                "carrier": shipment_map.get(number, {}).get('carrier', 'N/A'),
                 "status": details.get('last_event', details.get('status', 'N/A'))
             })
 

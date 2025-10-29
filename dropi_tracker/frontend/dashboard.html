@@ -21,6 +21,7 @@
             <thead>
                 <tr>
                     <th>Número de Guía</th>
+                    <th>Transportadora</th>
                     <th>Último Estado</th>
                 </tr>
             </thead>
@@ -28,6 +29,7 @@
                 {% for tracking in trackings %}
                 <tr>
                     <td>{{ tracking.number }}</td>
+                    <td>{{ tracking.carrier }}</td>
                     <td>{{ tracking.status }}</td>
                 </tr>
                 {% endfor %}
@@ -49,7 +51,7 @@
             // --- Populate Status Filter ---
             const statuses = new Set();
             for (let row of tableRows) {
-                const statusCell = row.getElementsByTagName('td')[1];
+                const statusCell = row.getElementsByTagName('td')[2]; // Corrected index
                 if (statusCell) {
                     statuses.add(statusCell.textContent.trim());
                 }
@@ -68,9 +70,12 @@
 
                 for (let row of tableRows) {
                     const guideCell = row.getElementsByTagName('td')[0];
-                    const statusCell = row.getElementsByTagName('td')[1];
+                    const carrierCell = row.getElementsByTagName('td')[1];
+                    const statusCell = row.getElementsByTagName('td')[2]; // Corrected index
 
-                    const guideMatch = guideCell.textContent.toLowerCase().includes(searchTerm);
+                    // Search term can now match guide or carrier
+                    const guideMatch = guideCell.textContent.toLowerCase().includes(searchTerm) ||
+                                     carrierCell.textContent.toLowerCase().includes(searchTerm);
                     const statusMatch = selectedStatus === "" || statusCell.textContent.trim() === selectedStatus;
 
                     if (guideMatch && statusMatch) {

@@ -32,8 +32,8 @@ class DropiAPIClient:
 
         return token
 
-    def get_tracking_numbers(self):
-        """Fetches orders from Dropi and extracts tracking numbers."""
+    def get_shipments(self):
+        """Fetches orders from Dropi and extracts shipment information (tracking number and carrier)."""
         orders_url = f"{API_BASE_URL}/orders/myorders"
         headers = {
             "Authorization": f"Bearer {self.token}"
@@ -42,15 +42,18 @@ class DropiAPIClient:
         response = requests.get(orders_url, headers=headers)
         response.raise_for_status()
 
-        # The API response seems to have the list of orders directly
         orders = response.json()
         if not isinstance(orders, list):
-             # Trying to access a potential data key if the response is a dict
             orders = orders.get('data', [])
 
-        tracking_numbers = []
+        shipments = []
         for order in orders:
-            if order.get('shipping_guide'):
-                tracking_numbers.append(order['shipping_guide'])
+            guide = order.get('shipping_guide')
+            carrier = order.get('shipping_company')
+            if guide and carrier:
+                shipments.append({
+                    "number": guide,
+                    "carrier": carrier
+                })
 
-        return tracking_numbers
+        return shipments
