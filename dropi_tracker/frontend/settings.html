@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración - Dropi Tracker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            justify-content: start;
+            padding-top: 2rem;
+        }
+        .container {
+            text-align: left;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        code {
+            background-color: #eee;
+            padding: 2px 5px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Configuración de la Sincronización Automática</h1>
+        <p>
+            Para que la sincronización automática funcione, la aplicación necesita acceder a tus
+            credenciales de Dropi de forma segura. Por favor, configura las siguientes
+            variables de entorno en el sistema donde se ejecuta la aplicación:
+        </p>
+        <ul>
+            <li><code>DROPI_EMAIL</code>: Tu correo electrónico de inicio de sesión en Dropi.</li>
+            <li><code>DROPI_PASSWORD</code>: Tu contraseña de Dropi.</li>
+            <li><code>SECRET_KEY</code>: Una clave secreta larga y aleatoria para la aplicación.</li>
+        </ul>
+        <p>
+            Una vez configuradas, el botón "Sincronizar con Dropi" en la página principal
+            utilizará estas credenciales para conectarse a la API de Dropi.
+        </p>
+        <a href="{{ url_for('index') }}" class="back-link">Volver al inicio</a>
+    </div>
+</body>
+</html>

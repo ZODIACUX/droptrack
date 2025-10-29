@@ -7,10 +7,17 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Sube tu archivo CSV de Dropi</h1>
-    <form action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data">
-        <input type="file" name="csv_file" accept=".csv">
-        <button type="submit">Subir y Rastrear</button>
-    </form>
+    <div class="container">
+        <h1>Sube tu archivo CSV de Dropi</h1>
+        <form action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data">
+            <input type="file" name="csv_file" accept=".csv">
+            <button type="submit">Subir y Rastrear</button>
+        </form>
+        <div class="separator">o</div>
+        <div class="sync-actions">
+            <a href="{{ url_for('sync_with_dropi') }}" class="button-sync">Sincronizar con Dropi</a>
+            <a href="{{ url_for('settings') }}" class="settings-link">Configurar</a>
+        </div>
+    </div>
 </body>
 </html>
